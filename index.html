@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مناقشة بروجكت AI — الجدول الزمني</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="rail" aria-hidden="true">
+  <div class="rail-track"></div>
+</div>
+
+<header class="hero">
+  <p class="eyebrow">جدول مناقشات مشروع الذكاء الاصطناعي</p>
+  <h1>مناقشة بروجكت AI</h1>
+  <div class="day-cards">
+    <div class="day-card wed">
+      <span class="day-name">الأربعاء</span>
+      <span class="day-time">تبدأ 10:00 صباحًا</span>
+      <span class="day-slots" id="wed-slots">—</span>
+    </div>
+    <div class="day-card thu">
+      <span class="day-name">الخميس</span>
+      <span class="day-time">تبدأ 11:30 صباحًا</span>
+      <span class="day-slots" id="thu-slots">—</span>
+    </div>
+  </div>
+  <p class="hero-note">كل فريق يأخذ ٥ دقائق مناقشة. عدد الفرق ينقسم بالتساوي بين اليومين.</p>
+</header>
+
+<main>
+
+  <!-- SECTION: Register new team -->
+  <section class="card" id="register-section">
+    <div class="card-head">
+      <span class="tag">تسجيل جديد</span>
+      <h2>لسه معملتش تيم؟</h2>
+    </div>
+    <p class="hint">لو أنت وأصحابك مسجلين فريق بالفعل، تجاهل القسم ده وانزل تحت لاختيار المعاد مباشرة.</p>
+    <button type="button" class="btn btn-secondary" id="show-register-btn">لا أملك فريق — سجّل فريق جديد</button>
+
+    <div id="register-form-wrap" class="hidden">
+      <p class="hint">حتى ٣ أفراد لكل فريق. هيتحدد لك رقم فريق تلقائيًا.</p>
+
+      <form id="register-form">
+        <div class="member-row">
+          <span class="member-label">العضو ١ <em>(إجباري)</em></span>
+          <input type="text" class="field-name" name="name1" placeholder="الاسم بالكامل" required>
+          <input type="text" class="field-id" name="id1" placeholder="الرقم الجامعي" required inputmode="numeric">
+        </div>
+        <div class="member-row">
+          <span class="member-label">العضو ٢</span>
+          <input type="text" class="field-name" name="name2" placeholder="الاسم بالكامل">
+          <input type="text" class="field-id" name="id2" placeholder="الرقم الجامعي" inputmode="numeric">
+        </div>
+        <div class="member-row">
+          <span class="member-label">العضو ٣</span>
+          <input type="text" class="field-name" name="name3" placeholder="الاسم بالكامل">
+          <input type="text" class="field-id" name="id3" placeholder="الرقم الجامعي" inputmode="numeric">
+        </div>
+        <button type="submit" class="btn btn-primary">سجّل الفريق</button>
+      </form>
+      <div id="register-result" class="result-box hidden"></div>
+    </div>
+  </section>
+
+  <!-- SECTION: Choose day -->
+  <section class="card" id="day-section">
+    <div class="card-head">
+      <span class="tag">اختيار اليوم</span>
+      <h2>عندك رقم فريق؟ اختار يومك</h2>
+    </div>
+    <p class="hint">اليوم بيتقفل لما يوصل لنص عدد الفرق المسجلة كلها.</p>
+
+    <form id="lookup-form">
+      <input type="number" id="team-number-input" placeholder="رقم الفريق" required min="1">
+      <button type="submit" class="btn btn-secondary">دوّر على فريقي</button>
+    </form>
+
+    <div id="team-found" class="team-found hidden">
+      <p class="found-title">فريق رقم <span id="found-number"></span></p>
+      <ul id="found-members"></ul>
+      <div id="found-status"></div>
+
+      <div id="current-slot-box" class="current-slot-box hidden">
+        <span id="current-slot-text"></span>
+        <button type="button" class="btn btn-link" id="change-slot-btn">غيّر الموعد</button>
+      </div>
+
+      <div class="day-choice hidden" id="day-choice">
+        <p class="picker-title">اختار يومك، وبعدين اختار معاد فاضي يناسبك:</p>
+        <div class="day-toggle-group">
+          <button type="button" class="day-toggle wed" data-day="wed">
+            الأربعاء <small id="toggle-wed-count"></small>
+          </button>
+          <button type="button" class="day-toggle thu" data-day="thu">
+            الخميس <small id="toggle-thu-count"></small>
+          </button>
+        </div>
+        <div class="slot-grid" id="slot-grid"></div>
+      </div>
+    </div>
+    <div id="day-result" class="result-box hidden"></div>
+  </section>
+
+  <!-- SECTION: Master table (every team, every student) -->
+  <section class="card wide" id="master-section">
+    <div class="card-head">
+      <span class="tag">كل الفرق</span>
+      <h2>جدول كل الفرق والطلاب</h2>
+    </div>
+    <p class="hint">قائمة بكل الفرق (القديمة والمسجلة حديثًا) وكل الطلاب في كل فريق، مع اليوم والموعد أول ما يتحددوا.</p>
+    <div class="table-scroll">
+      <table class="schedule-table">
+        <thead>
+          <tr><th>رقم الفريق</th><th>الطلاب</th><th>اليوم</th><th>الموعد</th></tr>
+        </thead>
+        <tbody id="table-master"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION: Full schedule -->
+  <section class="card wide" id="schedule-section">
+    <div class="card-head">
+      <span class="tag">الجدول حسب اليوم</span>
+      <h2>جدول المناقشات لكل يوم</h2>
+    </div>
+    <div class="schedule-tabs">
+      <button class="tab-btn active" data-tab="wed">الأربعاء</button>
+      <button class="tab-btn" data-tab="thu">الخميس</button>
+      <button class="tab-btn" data-tab="unassigned">لسه ما اختارتش يوم</button>
+    </div>
+
+    <div class="schedule-panel" id="panel-wed">
+      <div class="table-scroll">
+      <table class="schedule-table">
+        <thead>
+          <tr><th>الميعاد</th><th>رقم الفريق</th><th>الأعضاء</th></tr>
+        </thead>
+        <tbody id="table-wed"></tbody>
+      </table>
+      </div>
+    </div>
+    <div class="schedule-panel hidden" id="panel-thu">
+      <div class="table-scroll">
+      <table class="schedule-table">
+        <thead>
+          <tr><th>الميعاد</th><th>رقم الفريق</th><th>الأعضاء</th></tr>
+        </thead>
+        <tbody id="table-thu"></tbody>
+      </table>
+      </div>
+    </div>
+    <div class="schedule-panel hidden" id="panel-unassigned">
+      <div class="table-scroll">
+      <table class="schedule-table">
+        <thead>
+          <tr><th>رقم الفريق</th><th>الأعضاء</th></tr>
+        </thead>
+        <tbody id="table-unassigned"></tbody>
+      </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>مناقشة بروجكت AI — البيانات محفوظة لحظيًا لكل الزوار بدون تسجيل دخول.</p>
+</footer>
+
+<!-- Firebase (Realtime Database) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="seed-data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
