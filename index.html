@@ -108,9 +108,12 @@
 
   <!-- SECTION: Master table (every team, every student) -->
   <section class="card wide" id="master-section">
-    <div class="card-head">
-      <span class="tag">كل الفرق</span>
-      <h2>جدول كل الفرق والطلاب</h2>
+    <div class="card-head" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+      <div>
+        <span class="tag">كل الفرق</span>
+        <h2>جدول كل الفرق والطلاب</h2>
+      </div>
+      <button type="button" class="btn btn-secondary" id="export-excel-btn">⬇ تنزيل Excel</button>
     </div>
     <p class="hint">قائمة بكل الفرق (القديمة والمسجلة حديثًا) وكل الطلاب في كل فريق، مع اليوم والموعد أول ما يتحددوا.</p>
     <div class="table-scroll">
@@ -176,6 +179,7 @@
 <!-- Firebase (Realtime Database) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="firebase-config.js"></script>
 <script src="seed-data.js"></script>
 <script src="app.js"></script>
