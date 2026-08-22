@@ -369,6 +369,30 @@ function showResult(box, ok, msg) {
   box.classList.add(ok ? "ok" : "bad");
 }
 
+// ---------- export to Excel ----------
+document.getElementById("export-excel-btn").addEventListener("click", () => {
+  const rows = teamsArray(currentData).map((t) => {
+    const hasSlot = t.day && Number.isInteger(t.slotIndex);
+    const s = hasSlot ? slotTime(t.day, t.slotIndex) : null;
+    return {
+      "رقم الفريق": t.teamNumber,
+      "الطلاب": membersLine(t.members),
+      "اليوم": t.day ? DAY_META[t.day].label : "لم يتم التحديد بعد",
+      "من": s ? s.start : "—",
+      "إلى": s ? s.end : "—",
+    };
+  });
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = [{ wch: 10 }, { wch: 45 }, { wch: 14 }, { wch: 8 }, { wch: 8 }];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "جدول المناقشات");
+
+  const today = new Date().toISOString().slice(0, 10);
+  XLSX.writeFile(wb, `مناقشة-بروجكت-AI-${today}.xlsx`);
+});
+
 // ---------- schedule table (تبويبات حسب اليوم) ----------
 document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
