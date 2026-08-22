@@ -254,9 +254,9 @@ function refreshFoundPanel(num) {
     statusEl.textContent = "";
     currentBox.classList.remove("hidden");
     document.getElementById("current-slot-text").textContent =
-      `معادكم الحالي: يوم ${DAY_META[team.day].label}، من ${s.start} لـ ${s.end} ✅`;
-    // اخفي شبكة الاختيار لحد ما يدوس "غيّر الموعد"
-    choiceBox.classList.toggle("hidden", pickerDay === null);
+      `معادكم الحالي: يوم ${DAY_META[team.day].label}، من ${s.start} لـ ${s.end} ✅ (المعاد ده نهائي، لو محتاجين تغييره كلموا المسؤول)`;
+    // مفيش تغيير للمعاد بعد ما يتحجز — الاختيار نهائي
+    choiceBox.classList.add("hidden");
   } else {
     currentBox.classList.add("hidden");
     choiceBox.classList.remove("hidden");
@@ -296,13 +296,6 @@ document.querySelectorAll(".day-toggle").forEach((btn) => {
     const num = Number(document.getElementById("found-number").textContent);
     refreshFoundPanel(num);
   });
-});
-
-document.getElementById("change-slot-btn").addEventListener("click", () => {
-  const num = Number(document.getElementById("found-number").textContent);
-  const team = currentData[num];
-  pickerDay = (team && team.day) || "wed";
-  refreshFoundPanel(num);
 });
 
 function renderSlotGrid(day, team) {
